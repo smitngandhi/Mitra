@@ -54,7 +54,7 @@ const Register = () => {
         {/* Right Section - Registration Form */}
         <div className="w-full md:w-1/2 p-10">
           <h2 className="text-2xl font-semibold text-gray-800">Welcome to</h2>
-          <h2 className="text-3xl font-bold text-[#8A7FDB]">Design School</h2>
+          <h2 className="text-3xl font-bold text-[#8A7FDB]">Mitra</h2>
 
           {/* Full Name */}
           <div className="mt-6">
