@@ -5,11 +5,13 @@ from flask_cors import CORS
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from app.config import Config
+from authlib.integrations.flask_client import OAuth
 import os
 
 # Load environment variables
 load_dotenv()
 
+outh = OAuth()
 # Initialize extensions (Do not attach to `app` yet)
 mail = Mail()
 jwt = JWTManager()
@@ -23,10 +25,12 @@ def create_app():
 
     
     # Initialize Extensions with app
+    outh.init_app(app)
     mail.init_app(app)
     jwt.init_app(app)
     CORS(app)
 
+    
     # Database Connection (Attach to app)
     client = MongoClient(app.config["MONGO_URL"])  # Get from config
     app.db = client[app.config["MONGO_DB_NAME"]]  # Store DB name in config

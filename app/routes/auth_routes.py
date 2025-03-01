@@ -1,6 +1,8 @@
-from flask import make_response, request, jsonify
+from app import create_app
+from flask import make_response, request, jsonify, url_for
 from flask_jwt_extended import create_access_token
 import bcrypt
+from app.config import Config
 from app.models import users_collection
 from app.utils.mail import send_reset_email
 import secrets
@@ -9,6 +11,9 @@ from datetime import datetime , timedelta , time
 from datetime import datetime, timedelta, timezone
 from app.utils.security import  *
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from authlib.integrations.flask_client import OAuth
+import certifi
+
 
 # User Registration
 @auth_routes.route("/register", methods=["POST"])
@@ -124,4 +129,75 @@ def reset_password(token):
         return jsonify({"msg": "Password must be at least 8 characters long, include a number, an uppercase letter, and a special character"}), 400
 
     # Update password and remove reset token
-    
+
+
+@auth_routes.route("/login/google", methods=["GET"])
+def login_google():
+    try:
+        print("Yo reached login part")
+        CLIENT_ID='625117762742-occ7rvnho6rpdremg286j4gvegbsdh9u.apps.googleusercontent.com'
+        CLIENT_SECRET='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'
+        app = create_app()
+        oauth = OAuth(app)
+        google = oauth.register(
+        name='google',
+        client_id=CLIENT_ID,
+        client_secret=CLIENT_SECRET,
+        server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+        client_kwargs={'scope': 'openid profile email'},)
+        print("Going for redirect url")
+        redirect_uri = url_for('auth_routes.authorize_google', _external=True)
+        print(f"Got url {redirect_uri}")
+        return google.authorize_redirect(redirect_uri)
+    except Exception as e:
+        app = create_app()
+        app.logger.error(f"Error during login: {str(e)}")
+        return "Error occurred during login", 500
+
+
+@auth_routes.route("/authorize/google", methods=["GET"])
+def authorize_google():
+    CLIENT_ID='625117762742-occ7rvnho6rpdremg286j4gvegbsdh9u.apps.googleusercontent.com'
+    CLIENT_SECRET='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'
+    app = create_app()
+    oauth = OAuth(app)
+    google = oauth.register(
+    name='google',
+    client_id=CLIENT_ID,
+    client_secret=CLIENT_SECRET,
+    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+    client_kwargs={'scope': 'openid profile email'},)
+    token = google.authorize_access_token()
+    print("Received token")
+    userinfo_endpoint = google.server_metadata['userinfo_endpoint']
+    print("Received userinfo")
+    resp = google.get(userinfo_endpoint,verify=certifi.where())
+    print("Received responses")
+    user_info = resp.json()
+    print(resp.json())
+    username = user_info['given_name']
+    full_name = user_info['name']
+    email = user_info['email']
+    # MONGO_URI = "mongodb+srv://username:Password@cluster0.mrvq5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0" # Ensure this variable is set in your environment
+
+    # Connect to MongoDB
+    # client = MongoClient(MONGO_URI)
+    # db = client["Mydatabase"]  # Ensure this matches your actual database name
+
+    # User Collection
+    # users_collection = db["users"]
+    user_data = users_collection.find_one({'username': username})
+    print("Received user data")
+    if not user_data:
+        print("New user")
+        new_user = {
+                "full_name": full_name,
+                "email": email,
+                "username": username,
+                "password": "123",
+            }
+        users_collection.insert_one(new_user)
+        print("User entered")
+
+    print("User exist")
+  # Redirect to a dashboard or home page

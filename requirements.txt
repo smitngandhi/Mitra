@@ -6,3 +6,7 @@ flask-mail
 python-dotenv
 gunicorn
 flask_cors
+bcrypt
+authlib
+certifi
+requests
