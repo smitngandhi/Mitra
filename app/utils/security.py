@@ -1,6 +1,7 @@
 import bcrypt
 from flask_jwt_extended import create_access_token, decode_token
-
+import re
+import hashlib
 # Hash Password
 def generate_hash_password(password):
     return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
@@ -16,3 +17,17 @@ def generate_token(identity):
 # Decode JWT Token
 def decode_jwt(token):
     return decode_token(token)
+
+
+def is_strong_password(password):
+    pattern = r"^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+    return bool(re.match(pattern, password))
+
+def is_valid_email(email):
+    pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    return bool(re.match(pattern, email))
+
+
+def generate_hash_token(token):
+    return hashlib.sha256(token.encode()).hexdigest()
+
