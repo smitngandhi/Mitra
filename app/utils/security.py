@@ -2,7 +2,7 @@ import bcrypt
 from flask_jwt_extended import create_access_token, decode_token
 
 # Hash Password
-def hash_password(password):
+def generate_hash_password(password):
     return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
 
 # Verify Password
