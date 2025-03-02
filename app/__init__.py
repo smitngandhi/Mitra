@@ -28,7 +28,10 @@ def create_app():
     outh.init_app(app)
     mail.init_app(app)
     jwt.init_app(app)
-    CORS(app)
+    # CORS(app)
+
+# ✅ Enable CORS Properly
+    CORS(app, origins="http://localhost:3001", supports_credentials=True)
 
     
     # Database Connection (Attach to app)

@@ -10,3 +10,10 @@ bcrypt
 authlib
 certifi
 requests
+uuid
+transformers
+tensorflow
+langchain
+langchain_community
+openai
+vaderSentiment

@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import GoogleButton from "../components/GoogleButton";
 import illustration from "../assets/Illustration.jpg.jpeg";
+import { useNavigate } from "react-router-dom"; 
 
 const Register = () => {
+  const navigate = useNavigate();
   const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -33,6 +35,8 @@ const Register = () => {
       if (response.ok) {
         // Registration successful, handle accordingly
         console.log(data.msg);
+        //HERE
+        navigate("/");
       } else {
         setError(data.msg); // Handle error response from Flask
       }

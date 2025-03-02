@@ -1,47 +1,63 @@
 from app import create_app
-from flask import make_response, request, jsonify, url_for
-from flask_jwt_extended import create_access_token
-import bcrypt
-from app.config import Config
-from app.models import users_collection
+from flask import make_response, redirect, request, jsonify, url_for
+from app.models import users_collection , chats_collection
 from app.utils.mail import send_reset_email
 import secrets
 from app.routes import auth_routes
-from datetime import datetime , timedelta , time
+from datetime import datetime , timedelta 
 from datetime import datetime, timedelta, timezone
 from app.utils.security import  *
-from flask_jwt_extended import jwt_required, get_jwt_identity
 from authlib.integrations.flask_client import OAuth
 import certifi
+import uuid
 
 
 # User Registration
 @auth_routes.route("/register", methods=["POST"])
 def register():
-    data = request.get_json()
+    user = request.get_json()
 
-    if not is_valid_email(data["email"]):
+    if not is_valid_username(user["username"]):
+        return jsonify({"msg": "Username must be at least 5 characters long, start with a letter, and contain only letters, numbers, or underscores"}), 400
+    
+    if is_valid_username(user["username"]):
+        if not verify_password(user["username"]):
+            return jsonify({"msg": "Username already exists"}), 400
+
+    if not is_valid_email(user["email"]):
         return jsonify({"msg": "Invalid email format"}), 400
 
-    if not is_strong_password(data["password"]):
+    if not is_strong_password(user["password"]):
         return jsonify({"msg": "Password must be at least 8 characters long, include a number, an uppercase letter, and a special character"}), 400
 
-    if users_collection.find_one({"email": data["email"]}):
+    if users_collection.find_one({"email": user["email"]}):
         return jsonify({"msg": "Email already registered"}), 409
     
-    hashed_password = generate_hash_password(data["password"])
+    hashed_password = generate_hash_password(user["password"])
+
+    user_id = str(uuid.uuid4())
 
     new_user = {
-        "full_name": data["full_name"],
-        "email": data["email"],
-        "username": data["username"],
+        "user_id": user_id,  # Added unique user ID
+        "full_name": user["full_name"],
+        "email": user["email"],
+        "username": user["username"],
         "password": hashed_password,
         "test_results": {},  
         "chatbot_preference": None
+        # "chat_history": []  # Added empty list for storing chatbot interactions
     }
 
     users_collection.insert_one(new_user)
-    return jsonify({"msg": "User registered successfully"}), 201
+    access_token = generate_token(user["email"])
+
+    response = make_response(jsonify({"msg": f"{user["username"]} registered successfully", "user_id": user_id}))
+    response.set_cookie("user_id", user_id, httponly=True, secure=True, samesite="Lax")
+    response.set_cookie("access_token", access_token, httponly=True, secure=True, samesite="Lax")  
+
+    return response, 201
+
+
 
 # User Login
 @auth_routes.route("/login", methods=["POST"])
@@ -51,23 +67,29 @@ def login():
     user = users_collection.find_one({"email": data["email"]})
     if not user:
         return jsonify({"msg": "User not found"}), 404
-    
+
+    # Check for too many failed login attempts
     if user.get("failed_attempts", 0) >= 5:
         return jsonify({"msg": "Account locked due to multiple failed login attempts. Try again later."}), 403
-    
 
-
+    # Verify password
     if verify_password(data["password"], user["password"]):
 
+        # Reset failed attempts
         users_collection.update_one({"email": user["email"]}, {"$set": {"failed_attempts": 0}})
-        access_token = generate_token(user["email"])
 
-        response = make_response(jsonify({"msg": "Login successful" , "access_token" : access_token}) , 200)
+        # Generate tokens
+        access_token = generate_token(user["email"])
+        user_id = user["user_id"]  # Fetch user_id from DB
+
+        # Create response with secure HTTP-only cookies
+        response = make_response(jsonify({"msg": "Login successful", "access_token": access_token, "user_id": user_id}), 200)
         response.set_cookie("access_token", access_token, httponly=True, secure=True, samesite="Strict")
+        response.set_cookie("user_id", user_id, httponly=True, secure=True, samesite="Strict")
 
         return response
     
-    
+    # Increment failed attempts if password is incorrect
     users_collection.update_one({"email": user["email"]}, {"$inc": {"failed_attempts": 1}})
     return jsonify({"msg": "Incorrect password"}), 401
 
@@ -75,32 +97,53 @@ def login():
 @auth_routes.route("/forgot-password", methods=["POST"])
 def forgot_password():
     data = request.get_json()
+
+    
+    field="email"
     user = users_collection.find_one({"email": data["email"]})
 
     if not user:
-        return jsonify({"msg": "User not found"}), 404
+        user = users_collection.find_one({"email": data["username"]})
+        field="username"
+
+    if not user:
+        return jsonify({"msg": "Not a valid Email/Username"}), 404
+
 
     reset_token = secrets.token_urlsafe(32)
     hashed_reset_token = generate_hash_token(reset_token)
-    
     expiration_time = datetime.now(timezone.utc) + timedelta(minutes=10) 
-
-
-    # Store reset token and expiry time
-    users_collection.update_one(
+    
+    if(field=="email"):
+        users_collection.update_one(
         {"email": data["email"]},
         {"$set": {"reset_token": hashed_reset_token, "reset_token_expiry": expiration_time}}
     )
 
-    send_reset_email(data["email"], reset_token)
-    return jsonify({"msg": "Password reset email sent"}), 200
+        send_reset_email(data["email"], reset_token)
+        return jsonify({"msg": f"Password reset email sent to {data["email"]}"}), 200
+
+    if(field=="username"):
+
+    
+        users_collection.update_one(
+            {"username": data["username"]},
+            {"$set": {"reset_token": hashed_reset_token, "reset_token_expiry": expiration_time}}
+        )
+
+        user = users_collection.find_one({"username": data["username"]})
+
+        send_reset_email(user["email"], reset_token)
+        return jsonify({"msg": f"Password reset email sent to {user["email"]}"}), 200
 
 
 @auth_routes.route("/reset-password/<token>", methods=["POST"])
 # @jwt_required
 def reset_password(token):
-    # current_user = get_jwt_identity()
+
     hashed_token = generate_hash_token(token)
+
+
     data = request.get_json()
     user = users_collection.find_one({"reset_token": hashed_token})
 
@@ -129,6 +172,35 @@ def reset_password(token):
         return jsonify({"msg": "Password must be at least 8 characters long, include a number, an uppercase letter, and a special character"}), 400
 
     # Update password and remove reset token
+
+
+
+
+@auth_routes.route("/api/chat", methods=["POST"])
+def chat():
+    data = request.get_json()
+    message = data["message"]
+    user_id = request.cookies.get("user_id")  # Fetch user_id from cookies
+
+    if not user_id:
+        print("Did not find the user_id")
+        return jsonify({"error": "Unauthorized"}), 401
+
+
+    response_text  , sentiment_score = generate_llm_response_sentiment(message)
+
+    chat_entry = {
+        "user_id": user_id,
+        "user_message": message,
+        "bot_response": response_text,
+        "timestamp": datetime.now(timezone.utc),
+        "sentiment_score" : sentiment_score
+    }
+
+    chats_collection.insert_one(chat_entry)
+
+    return jsonify({"reply": response_text , "sentiment_score": sentiment_score} )
+
 
 
 @auth_routes.route("/login/google", methods=["GET"])
@@ -186,18 +258,24 @@ def authorize_google():
 
     # User Collection
     # users_collection = db["users"]
-    user_data = users_collection.find_one({'username': username})
+    user_data = users_collection.find_one({'email': email})
     print("Received user data")
     if not user_data:
         print("New user")
+        user_id = str(uuid.uuid4())
         new_user = {
+                "user_id" : user_id,
                 "full_name": full_name,
                 "email": email,
                 "username": username,
-                "password": "123",
+                "password": "none",
+                "test_results": {},  
+                "chatbot_preference": None
             }
         users_collection.insert_one(new_user)
         print("User entered")
+    else:
+        print("User exist")
+    return redirect("http://localhost:3000/")
 
-    print("User exist")
-  # Redirect to a dashboard or home page
+

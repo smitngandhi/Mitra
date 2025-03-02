@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import GoogleButton from "../components/GoogleButton";
 import illustration from "../assets/Illustration.jpg.jpeg";
+import { useNavigate } from "react-router-dom"; 
 
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -28,6 +30,7 @@ const Login = () => {
       const data = await response.json();
       if (response.ok) {
         // Handle successful login (e.g., redirect to dashboard)
+        navigate("/");
         console.log(data.msg);
       } else {
         setError(data.msg); // Handle error response from Flask
@@ -89,7 +92,7 @@ const Login = () => {
               <input type="checkbox" className="mr-2" />
               <span className="text-sm text-gray-600">Remember me</span>
             </label>
-            <Link to="/forgot-password" className="text-sm text-[#5C49E0] font-semibold">Forgot Password?</Link>
+            <Link to="/forgot_password" className="text-sm text-[#5C49E0] font-semibold">Forgot Password?</Link>
           </div>
 
           {/* Login Button */}
