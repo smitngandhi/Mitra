@@ -2,6 +2,7 @@ from langchain.chat_models import ChatOpenAI
 from langchain.schema import AIMessage, HumanMessage, SystemMessage
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import uvicorn
 import config  # Import API keys from config.py
 
@@ -11,6 +12,9 @@ llm = ChatOpenAI(
     openai_api_key=config.TOGETHER_API_KEY,
     openai_api_base="https://api.together.xyz/v1"
 )
+
+# Initialize Sentiment Analyzer
+analyzer = SentimentIntensityAnalyzer()
 
 # FastAPI app setup
 app = FastAPI()
@@ -31,13 +35,24 @@ async def chat(request: dict):
         if not user_message:
             raise HTTPException(status_code=400, detail="Message is required")
 
+        # Perform Sentiment Analysis
+        scores = analyzer.polarity_scores(user_message)
+        compound_score = scores['compound']
+
+        # Normalize the sentiment score to the range (0,1)
+        sentiment_score = (compound_score + 1) / 2  # Maps [-1,1] to [0,1]
+
+        # Generate chatbot response
         messages = [
             SystemMessage(content="You are a mental health support chatbot. Be empathetic and supportive."),
             HumanMessage(content=user_message)
         ]
-        
         response = llm(messages)
-        return {"response": response.content}
+
+        return {
+            "chatbot_response": response.content,
+            "sentiment_score": round(sentiment_score, 2)  # Round to 2 decimal places
+        }
 
     except Exception as e:
         return {"error": str(e)}
