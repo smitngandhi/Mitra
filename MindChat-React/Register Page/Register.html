@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Design School</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-white">  <!-- White background -->
+
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden max-w-4xl w-full flex">
+        
+        <!-- Left Section - Illustration -->
+        <div class="hidden md:flex w-1/2 items-center justify-center bg-white">  
+            <img src="Illustration.jpg.jpeg" alt="Register Illustration" class="w-3/4">
+        </div>
+
+        <!-- Right Section - Registration Form -->
+        <div class="w-full md:w-1/2 p-10">
+            <h2 class="text-2xl font-semibold text-gray-800">Welcome to</h2>
+            <h2 class="text-3xl font-bold text-[#8A7FDB]">Design School</h2>  <!-- Light Indigo -->
+
+            <!-- Full Name -->
+            <div class="mt-6">
+                <label class="block text-gray-700 font-medium">Full Name</label>
+                <div class="flex items-center border rounded-lg mt-1 px-3 py-2 bg-gray-100">
+                    <span class="text-gray-500 pr-2">👤</span>
+                    <input type="text" placeholder="John Doe" class="w-full bg-transparent focus:outline-none text-gray-800">
+                </div>
+            </div>
+
+            <!-- Username -->
+            <div class="mt-4">
+                <label class="block text-gray-700 font-medium">Username</label>
+                <div class="flex items-center border rounded-lg mt-1 px-3 py-2 bg-gray-100">
+                    <span class="text-gray-500 pr-2">👤</span>
+                    <input type="text" placeholder="johndoe123" class="w-full bg-transparent focus:outline-none text-gray-800">
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div class="mt-4">
+                <label class="block text-gray-700 font-medium">Email</label>
+                <div class="flex items-center border rounded-lg mt-1 px-3 py-2 bg-gray-100">
+                    <span class="text-gray-500 pr-2">📧</span>
+                    <input type="email" placeholder="example@gmail.com" class="w-full bg-transparent focus:outline-none text-gray-800">
+                </div>
+            </div>
+
+            <!-- Password -->
+            <div class="mt-4">
+                <label class="block text-gray-700 font-medium">Password</label>
+                <div class="flex items-center border rounded-lg mt-1 px-3 py-2 bg-gray-100">
+                    <span class="text-gray-500 pr-2">🔑</span>
+                    <input type="password" placeholder="********" class="w-full bg-transparent focus:outline-none text-gray-800">
+                    <span class="text-gray-500 cursor-pointer">👁️</span>
+                </div>
+            </div>
+
+            <!-- Register Button -->
+            <button class="w-full bg-[#8A7FDB] text-white font-semibold rounded-lg py-3 mt-4">Register</button>  <!-- Light Indigo -->
+
+            <!-- OR Divider -->
+            <div class="flex items-center my-4">
+                <hr class="w-full border-gray-300">
+                <span class="px-3 text-gray-400">OR</span>
+                <hr class="w-full border-gray-300">
+            </div>
+
+            <!-- Google Registration -->
+            <button class="w-full flex items-center justify-center border py-2 rounded-lg bg-white shadow">
+                <img src="google.svg" class="h-6 mr-2">
+                <span class="text-gray-800">Register with Google</span>
+            </button>
+
+            <!-- Login Link -->
+            <p class="text-center mt-4 text-gray-600">
+                Already have an account? <a href="#" class="text-[#8A7FDB] font-semibold">Log in</a>  <!-- Light Indigo -->
+            </p>
+
+        </div>
+    </div>
+
+</body>
+</html>
