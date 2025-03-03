@@ -141,7 +141,7 @@ function App() {
                   alt="Mind icon"
                 />
               </div>
-              <h3>Know Your MIND</h3>
+              <h3 class="Service-content">Know Your MIND</h3>
               <p>The 'Know Your Mind' test explores your psychological profile.</p>
               <button className="learn-more-btn">Learn More →</button>
             </div>
@@ -153,7 +153,7 @@ function App() {
                   alt="Self-care icon"
                 />
               </div>
-              <h3>SELFCARE</h3>
+              <h3 class="Service-content1">SELFCARE</h3>
               <p>A structured self-care plan fosters balance through healthy habits, mindfulness, and growth.</p>
               <button className="learn-more-btn">Learn More →</button>
             </div>
@@ -165,7 +165,7 @@ function App() {
                   alt="Chat icon"
                 />
               </div>
-              <h3>MINDchat</h3>
+              <h3 class="Service-content2">MINDchat</h3>
               <p>MindChat: Your Intelligent Companion for Mental Well-being & Self-Care.</p>
               <button className="learn-more-btn">Learn More →</button>
             </div>
