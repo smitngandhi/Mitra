@@ -31,7 +31,7 @@ def create_app():
     # CORS(app)
 
 # ✅ Enable CORS Properly
-    CORS(app, origins="http://localhost:3001", supports_credentials=True)
+    CORS(app, supports_credentials=True)
 
     
     # Database Connection (Attach to app)

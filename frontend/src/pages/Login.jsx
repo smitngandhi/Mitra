@@ -4,6 +4,7 @@ import GoogleButton from "../components/GoogleButton";
 import illustration from "../assets/Illustration.jpg.jpeg";
 import { useNavigate } from "react-router-dom"; 
 
+
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -25,12 +26,13 @@ const Login = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(loginData),
+        credentials: "include",
       });
 
       const data = await response.json();
       if (response.ok) {
         // Handle successful login (e.g., redirect to dashboard)
-        navigate("/");
+        navigate("/After_Login");
         console.log(data.msg);
       } else {
         setError(data.msg); // Handle error response from Flask

@@ -20,9 +20,9 @@ def register():
     if not is_valid_username(user["username"]):
         return jsonify({"msg": "Username must be at least 5 characters long, start with a letter, and contain only letters, numbers, or underscores"}), 400
     
-    if is_valid_username(user["username"]):
-        if not verify_password(user["username"]):
-            return jsonify({"msg": "Username already exists"}), 400
+    # if is_valid_username(user["username"]):
+        
+    #         return jsonify({"msg": "Username already exists"}), 400
 
     if not is_valid_email(user["email"]):
         return jsonify({"msg": "Invalid email format"}), 400
@@ -52,9 +52,10 @@ def register():
     access_token = generate_token(user["email"])
 
     response = make_response(jsonify({"msg": f"{user["username"]} registered successfully", "user_id": user_id}))
-    response.set_cookie("user_id", user_id, httponly=True, secure=True, samesite="Lax")
-    response.set_cookie("access_token", access_token, httponly=True, secure=True, samesite="Lax")  
+    response.set_cookie("user_id", user_id, httponly=True, secure=False, samesite="None")
+    response.set_cookie("access_token", access_token, httponly=True, secure=False, samesite="None")  
 
+    print(response.headers)
     return response, 201
 
 
@@ -84,8 +85,10 @@ def login():
 
         # Create response with secure HTTP-only cookies
         response = make_response(jsonify({"msg": "Login successful", "access_token": access_token, "user_id": user_id}), 200)
-        response.set_cookie("access_token", access_token, httponly=True, secure=True, samesite="Strict")
-        response.set_cookie("user_id", user_id, httponly=True, secure=True, samesite="Strict")
+        response.set_cookie("access_token", access_token, httponly=True, secure=False, samesite="None")
+        response.set_cookie("user_id", user_id, httponly=True, secure=False, samesite="None")
+
+        print(response.headers)
 
         return response
     
@@ -178,19 +181,20 @@ def reset_password(token):
 
 @auth_routes.route("/api/chat", methods=["POST"])
 def chat():
+
     data = request.get_json()
     message = data["message"]
-    user_id = request.cookies.get("user_id")  # Fetch user_id from cookies
+    # user_id = request.cookies.get("user_id")  # Fetch user_id from cookies
 
-    if not user_id:
-        print("Did not find the user_id")
-        return jsonify({"error": "Unauthorized"}), 401
+    # if not user_id:
+    #     print("Did not find the user_id")
+    #     return jsonify({"error": "Unauthorized"}), 401
 
 
     response_text  , sentiment_score = generate_llm_response_sentiment(message)
-
+    print(response_text)
     chat_entry = {
-        "user_id": user_id,
+        "user_id": "111",
         "user_message": message,
         "bot_response": response_text,
         "timestamp": datetime.now(timezone.utc),
@@ -277,5 +281,31 @@ def authorize_google():
     else:
         print("User exist")
     return redirect("http://localhost:3000/")
+
+
+@auth_routes.route("/get-username", methods=["GET"])
+def get_username():
+
+    print(request.cookies)
+
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        return jsonify({"msg": "Unauthorized: No token provided"}), 401
+
+    try:
+        # Decode the token to extract email
+        email = decode_token(access_token)
+        print(email['sub'])
+        if not email:
+            return jsonify({"msg": "Invalid or expired token"}), 401
+        
+        # Fetch user from database
+        user = users_collection.find_one({"email": email['sub']})
+        if not user:
+            return jsonify({"msg": "User not found"}), 404
+        
+        return jsonify({"username": user["username"]}), 200
+    except Exception as e:
+        return jsonify({"msg": "Error retrieving username", "error": str(e)}), 500
 
 
