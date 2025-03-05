@@ -1,0 +1,305 @@
+:root {
+  --primary-purple: #6D5ED4;
+  --light-purple: #F0EEFF;
+  --text-color: #333;
+  --bg-color: #F9F9FF;
+}
+
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.app-container {
+  display: flex;
+  height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 250px;
+  background-color: var(--primary-purple);
+  color: white;
+  padding: 20px;
+  margin-top: 15px;
+  margin-bottom: 30px;
+  margin-left: 20px;
+  margin-right: 20px;
+  border-radius: 30px;
+}
+
+.sidebar .logo {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.sidebar nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar nav ul li {
+  padding: 10px;
+  margin: 5px 0;
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.sidebar nav ul li span {
+  margin-right: 10px;
+}
+
+/* .sidebar nav ul li.active {
+  background-color: rgba(255, 255, 255, 0.1);
+} */
+
+.sidebar nav ul li.selected {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* MAIN CONTENT */
+.main-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  margin-right: 20px;
+}
+
+/* TOP BAR (gradient) */
+.top-bar {
+  margin-top: 15px;
+  background: linear-gradient(to right, #f6e5ff, #fff8e6);
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-right: 20px;
+  border-radius: 30px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+/* MIND & RELAXATION PLAN SECTION */
+.plan-section {
+  padding: 20px;
+  margin-top: 10px;
+}
+
+.plan-section h2 {
+  font-size: 25px;
+  margin: 0 0 5px;
+  color: #333;
+}
+
+.plan-section p {
+  margin: 0 0 20px;
+  color: #666;
+  font-size: 15px;
+}
+
+/* STEPS GRID */
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  width: 70%;
+  margin-left: 100px;
+  row-gap: 45px;
+  column-gap: 100px;
+}
+
+/* STEP CARD */
+.step-card {
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  gap: 12px;
+  position: relative;
+}
+
+.step-card.completed {
+  border: 2px solid var(--primary-purple);
+}
+
+.step-card .image-container {
+  background-color: var(--light-purple);
+  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.step-card .step-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.step-card .step-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.step-card .step-name {
+  font-weight: bold;
+  font-size: 20px;
+  color: #333;
+}
+
+.step-card .step-number {
+  font-size: 13px;
+  color: #888;
+}
+
+.step-card .step-description {
+  font-size: 15px;
+  color: #666;
+}
+
+.step-card .lets-start-btn {
+  background-color: #F0E6FF;
+  color: var(--primary-purple);
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 13px;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.step-card .lets-start-btn:hover {
+  background-color: #E0D6FF;
+  transform: scale(1.02);
+}
+
+.step-card .completed-check {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  background-color: var(--primary-purple);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+}
+
+/* PROGRESS TRACKING SECTION */
+.progress-tracking {
+  margin-top: 30px;
+  padding: 0 20px;
+}
+
+.progress-tracking h2 {
+  font-size: 25px;
+  margin: 0 0 5px;
+  color: #333;
+}
+
+.progress-tracking p {
+  margin: 0 0 20px;
+  color: #666;
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+
+.progress-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* LEFT: Plan & Task Progress */
+.progress-left {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Plan Progress Container */
+.plan-progress-container {
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  padding: 20px;
+}
+
+.progress-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.progress-bar {
+  background-color: #E0E0E0;
+  height: 8px;
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+  margin: 10px 0;
+}
+
+.progress-fill {
+  background-color: var(--primary-purple);
+  height: 100%;
+  border-radius: 5px;
+  transform-origin: left;
+  transition: width 0.5s ease;
+}
+
+.progress-percent {
+  font-size: 14px;
+  color: #666;
+}
+
+/* Task Progress Container */
+.task-progress-container {
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  padding: 20px;
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+/* RIGHT: Mood Tracker */
+.progress-right {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.mood-chart-placeholder {
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  height: 220px;
+  position: relative;
+  margin-right: 20px;
+}
+
+/* SCROLL & HOVER ANIMATIONS (optional) can be added here */
+
