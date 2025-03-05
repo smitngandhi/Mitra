@@ -80,9 +80,11 @@ function App() {
 
       {/* Main content */}
       <div className="main-content">
-        <div className="header">
+      <div className="header-text">
           <h1>Welcome, Rahul</h1>
-          <p className="date">Tue, 07 June 2022</p>
+          <p className="header-date">Tue, 07 June 2022</p>
+        </div>
+        <div className="header">
         </div>
 
         <div className="profile-banner">
@@ -135,27 +137,6 @@ function App() {
                   <option>India</option>
                   <option>USA</option>
                   <option>UK</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label class="Text">Language</label>
-              <input type="text" value="Hindi" disabled className="form-control" />
-            </div>
-            <div className="form-group">
-              <div className="label-with-tag">
-                <label class="Text">Time Zone</label>
-                <span className="pending-tag">Pending</span>
-              </div>
-              <div className="select-wrapper">
-                <select className="form-control">
-                  <option>Your First Name</option>
-                  <option>IST (GMT+5:30)</option>
-                  <option>PST (GMT-8)</option>
-                  <option>EST (GMT-5)</option>
                 </select>
               </div>
             </div>
