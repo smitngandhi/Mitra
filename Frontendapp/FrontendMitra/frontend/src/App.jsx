@@ -10,7 +10,8 @@ import FAQS from "./pages/FAQs";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import After_Login_Home from "./pages/After_Login_Home";
-
+import Profile from "./pages/Profile"
+import Test from "./pages/Test"
 const App = () => {
   return (
     <>
@@ -24,6 +25,8 @@ const App = () => {
         <Route path="/faqs" element={<FAQS />}/>
         <Route path="/forgot_password" element={<ForgotPassword />} />
         <Route path="/reset_password/:token" element={<ResetPassword />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/test" element={<Test/>}/>
       </Routes>
       {/* <Footer /> */}
     </>
