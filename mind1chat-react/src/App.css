@@ -9,7 +9,6 @@ html, body {
 /* Container Layout */
 .container {
   display: flex;
-  width: 95%;
   gap: 10px;
   margin: 0 auto;
   background-color: #ffffff;
@@ -20,23 +19,25 @@ html, body {
 
 /* --- LEFT SIDEBAR --- */
 .sidebar {
+  margin-left: 15px;
+  margin-top: 25px;
+  width: 279px;
   display: flex;
   flex-direction: column;
-  width: 300px;
-  margin-top: 20px;
-  padding: 20px;
+  justify-content: space-between;
+  background: #423e99;
+  color: #fff;
   border-radius: 30px;
-  background-color: #7964B8;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  margin-bottom: 50px;
 }
 
 .Mitra {
   font-size: xx-large;
-  margin-top: 10px;
+  margin-top: 20px;
   border-bottom: 3px solid #ddd;
-  padding-bottom: 18px;
-  margin-bottom: 0;
+  padding-bottom: 30px;
   color: white;
+  padding-left: 40px;
 }
 
 /* Navigation */
@@ -50,13 +51,14 @@ html, body {
   display: flex;
   align-items: center;
   cursor: pointer;
-  font-size: 20px;
+  font-size: 25px;
   padding: 10px 0;
   color: white;
 }
 
 .active {
   font-weight: bolder;
+  font-size: 30px;
 }
 
 .menu-logo {
@@ -64,59 +66,26 @@ html, body {
   height: 20px;
   margin-right: 12px;
   filter: brightness(0) invert(1);
-}
-
-/* Chat Categories Section */
-.chat-section {
-  margin-top: 20px;
-  border-top: 1px solid #ccc;
-  padding-top: 10px;
-}
-
-.chats {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 20px;
-  margin: 0 0 10px 0;
-  color: #fff;
-}
-
-.add-chat {
-  cursor: pointer;
-  font-weight: bold;
-  margin-left: 10px;
-}
-
-.chat-section ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.chat-help {
-  margin: 5px 0;
-  font-size: 18px;
-  cursor: pointer;
-  color: #fff;
-}
-
-.chat-help:hover {
-  text-decoration: underline;
+  padding-left: 20px;
 }
 
 /* Sidebar Bottom */
 .sidebar-bottom {
   margin-top: auto;
+  display: flex;
+  justify-content: center;   /* center horizontally */
+  align-items: center;       /* center vertically if needed */
+  /* Removed padding-right: 30px; */
 }
 
 /* Happiness Meter Container */
 .happiness-meter-container {
-  width: 350px;
+  width: 400px;
   height: 170px;
-  margin: 0 auto;
+  margin: 0 auto;      /* center the SVG horizontally inside the container */
   position: relative;
   align-items: center;
+  padding-left: 0;
 }
 
 /* Optional: Subtle drop shadow for the meter */
@@ -124,57 +93,20 @@ html, body {
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 
-/* User Profile */
-.user-profile {
-  display: flex;
-  align-items: center;
-  padding: 6px;
-  border-radius: 20px;
-  border: 1px solid #ddd;
-  box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
-  background-color: rgba(156,71,216,0.1);
-  width: 90%;
-  margin-top: 15px;
-  margin-bottom: 0;
-}
-
-.profile-photo {
-  width: 40px;
-  height: 40px;
-  border-radius: 60%;
-  margin-right: 12px;
-  object-fit: cover;
-}
-
-.user-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.user-name {
-  font-size: 16px;
-  font-weight: bold;
-  color: #ffffff;
-  margin-bottom: 0;
-}
-
-.user-email {
-  font-size: 14px;
-  color: #ffffff;
-  margin-top: 2px;
-}
-
 /* --- RIGHT CONTAINER --- */
 .right-container {
   display: flex;
   flex-direction: column;
   flex: 1;
-  margin-top: 20px;
+  margin-top: 30px;
   background-color: #fff;
   border-radius: 30px;
   padding: 20px;
-  border: 1px solid black;
+  border: 1px solid #ccc;
   overflow: hidden;
+  margin-bottom: 45px;
+  width: 1200px;
+  margin-left: 20px;
 }
 
 .Mindchat {
@@ -222,9 +154,9 @@ html, body {
   padding: 10px;
   margin-bottom: 10px;
   border: 1px solid #ddd;
-  border-radius: 10px;
   display: flex;
   flex-direction: column;
+  border-radius: 0px 13px 0px 13px;
 }
 
 /* Message Bubbles */
@@ -237,13 +169,17 @@ html, body {
 }
 
 .ai-message {
-  background-color: #f1f1f1;
+  background-color: #fff1c5;
   align-self: flex-start;
+  font-size: 20px;
+  color: #311944;
 }
 
 .user-message {
-  background-color: #DCF8C6;
+  background-color: #e6e4fe;
   align-self: flex-end;
+  font-size: 20px;
+  color: #311944;
 }
 
 /* Chat Input Container */
@@ -284,6 +220,7 @@ html, body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  padding-right: 15px;
 }
 
 .send-arrow img {
@@ -302,7 +239,7 @@ html, body {
 
 .suggestion-btn {
   background-color: #ffffff;
-  border: 1px solid black;
+  border: 1px solid #ccc;
   padding: 8px 14px;
   border-radius: 20px;
   cursor: pointer;

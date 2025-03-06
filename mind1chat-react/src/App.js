@@ -39,7 +39,7 @@ function HappinessMeter({ value, onChange }) {
   };
 
   const handleMouseDown = () => {
-    setDragging(true);
+    setDragging(false);
   };
 
   const handleMouseUp = () => {
@@ -62,11 +62,11 @@ function HappinessMeter({ value, onChange }) {
             <stop offset="100%" stopColor="#2ECC71" />
           </linearGradient>
         </defs>
-        {/* Broad semicircular arc with rounded endpoints */}
+        {/* Thinner strokeWidth for the arc */}
         <path
           d="M 70 100 A 80 80 0 0 1 230 100"
           stroke="url(#happinessGrad)"
-          strokeWidth="20"
+          strokeWidth="10"
           strokeLinecap="round"
           fill="none"
         />
@@ -77,9 +77,9 @@ function HappinessMeter({ value, onChange }) {
           r="12"
           fill="#fff"
           stroke="#2ECC71"
-          strokeWidth="3"
+          strokeWidth="2"
           onMouseDown={handleMouseDown}
-          style={{ cursor: 'pointer' }}
+          style={{ cursor: 'not-allowed' }}
         />
         {/* "Happiness Meter" text at top-center */}
         <text
@@ -116,16 +116,11 @@ function App() {
   // Sidebar navigation items
   const navItems = [
     { icon: '/images/chat.svg', label: 'MINDchat', active: true },
-    { icon: '/images/personheart.svg', label: 'HealthCare', active: false },
     { icon: '/images/person.svg', label: 'Welfare Test', active: false },
+    { icon: '/images/personheart.svg', label: 'Selfcare Plans', active: true },
     { icon: '/images/person.svg', label: 'Profile', active: false },
-    { icon: '/images/house.svg', label: 'Health Reports', active: false },
     { icon: '/images/house.svg', label: 'Home', active: false },
-    { icon: '/images/arrow.svg', label: 'Logout', active: false },
   ];
-
-  // Chat categories to appear below Logout
-  const chatCategories = ['Mental Peace', 'Stress Relief', 'Medicinal Guidance'];
 
   // Chat state
   const [messages, setMessages] = useState([]);
@@ -158,6 +153,27 @@ function App() {
     }
   };
 
+  // 4 suggestion strings
+  const suggestions = [
+    'Having relationship problems',
+    'My toxic life',
+    'I am anxious today',
+    'I am bored',
+  ];
+
+  // On suggestion click => skip input; directly add user message & AI reply
+  const handleSuggestionClick = (suggestion) => {
+    // 1) Add the suggestion as a user message
+    setMessages((prev) => [...prev, { role: 'user', text: suggestion }]);
+    // 2) Simulate the AI response
+    setTimeout(() => {
+      setMessages((prev) => [
+        ...prev,
+        { role: 'ai', text: 'Hello, I am AI just like ChatGPT' },
+      ]);
+    }, 1000);
+  };
+
   const hasMessages = messages.length > 0;
 
   return (
@@ -180,30 +196,9 @@ function App() {
           </ul>
         </nav>
 
-        {/* Chat Categories Section */}
-        <div className="chat-section">
-          <h3 className="chats">
-            Chats <span className="add-chat">+</span>
-          </h3>
-          <ul>
-            {chatCategories.map((cat, index) => (
-              <li key={index} className="chat-help">
-                {cat}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Sidebar Bottom: Happiness Meter above user profile */}
+        {/* Sidebar Bottom: Happiness Meter */}
         <div className="sidebar-bottom">
           <HappinessMeter value={happiness} onChange={setHappiness} />
-          <div className="user-profile">
-            <img src="/images/User.png" alt="User" className="profile-photo" />
-            <div className="user-info">
-              <p className="user-name">Rahul Shah</p>
-              <p className="user-email">rahul@gmail.com</p>
-            </div>
-          </div>
         </div>
       </aside>
 
@@ -240,11 +235,18 @@ function App() {
                 <img src="/images/arrow1.svg" alt="Send" />
               </div>
             </div>
+
+            {/* Suggestion buttons that skip the input and directly send */}
             <div className="suggestions-row">
-              <button className="suggestion-btn">Having relationship problems</button>
-              <button className="suggestion-btn">My toxic life</button>
-              <button className="suggestion-btn">I am anxious today</button>
-              <button className="suggestion-btn">I am bored</button>
+              {suggestions.map((sugg, i) => (
+                <button
+                  key={i}
+                  className="suggestion-btn"
+                  onClick={() => handleSuggestionClick(sugg)}
+                >
+                  {sugg}
+                </button>
+              ))}
             </div>
           </div>
         ) : (
