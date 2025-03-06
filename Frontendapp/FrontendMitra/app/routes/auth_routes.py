@@ -247,43 +247,89 @@ def authorize_google():
     server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
     client_kwargs={'scope': 'openid profile email'},)
     token = google.authorize_access_token()
-    print("Received token")
     userinfo_endpoint = google.server_metadata['userinfo_endpoint']
-    print("Received userinfo")
     resp = google.get(userinfo_endpoint,verify=certifi.where())
-    print("Received responses")
     user_info = resp.json()
-    print(resp.json())
-    username = user_info['given_name']
+    
+    # Get user details from Google
     full_name = user_info['name']
     email = user_info['email']
-    # MONGO_URI = "mongodb+srv://username:Password@cluster0.mrvq5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0" # Ensure this variable is set in your environment
-
-    # Connect to MongoDB
-    # client = MongoClient(MONGO_URI)
-    # db = client["Mydatabase"]  # Ensure this matches your actual database name
-
-    # User Collection
-    # users_collection = db["users"]
+    
+    # Check if user already exists
     user_data = users_collection.find_one({'email': email})
-    print("Received user data")
+    
     if not user_data:
-        print("New user")
+        # Generate a valid username from the email
+        base_username = email.split('@')[0].lower()
+        # Remove special characters and replace with underscore
+        base_username = ''.join(c if c.isalnum() else '_' for c in base_username)
+        
+        # Ensure username starts with a letter
+        if not base_username[0].isalpha():
+            base_username = 'user_' + base_username
+        
+        # Ensure username is at least 5 characters
+        if len(base_username) < 5:
+            base_username = base_username + '_user'
+        
+        # Check if username already exists, if so, append a number
+        username = base_username
+        count = 1
+        while users_collection.find_one({"username": username}):
+            username = f"{base_username}_{count}"
+            count += 1
+        
         user_id = str(uuid.uuid4())
         new_user = {
-                "user_id" : user_id,
-                "full_name": full_name,
-                "email": email,
-                "username": username,
-                "password": "none",
-                "test_results": {},  
-                "chatbot_preference": None
-            }
+            "user_id": user_id,
+            "full_name": full_name,
+            "email": email,
+            "username": username,
+            "password": "none",
+            "test_results": {},  
+            "chatbot_preference": None,
+            "gender": "Not specified",
+            "phone_number": "",
+            "country": "Not specified"
+        }
         users_collection.insert_one(new_user)
-        print("User entered")
+        
+        # Generate token for the new user
+        access_token = generate_token(email)
+        
+        # Create response with cookies and status flag for new user
+        response = make_response(jsonify({
+            "msg": "User registered with Google successfully", 
+            "access_token": access_token, 
+            "user_id": user_id,
+            "is_new_user": True
+        }), 201)
+        response.set_cookie("access_token", access_token, httponly=True, secure=False, samesite="None")
+        response.set_cookie("user_id", user_id, httponly=True, secure=False, samesite="None")
+        
+        return response
     else:
-        print("User exist")
-    return redirect("http://localhost:3000/")
+        # User exists, get user_id from existing user data 
+        user_id = user_data["user_id"]
+        
+        # Generate token for the existing user
+        access_token = generate_token(email)
+        
+        # Reset failed attempts if they exist
+        if "failed_attempts" in user_data:
+            users_collection.update_one({"email": email}, {"$set": {"failed_attempts": 0}})
+            
+        # Create response similar to regular login
+        response = make_response(jsonify({
+            "msg": "Login with Google successful", 
+            "access_token": access_token, 
+            "user_id": user_id,
+            "is_new_user": False
+        }), 200)
+        response.set_cookie("access_token", access_token, httponly=True, secure=False, samesite="None")
+        response.set_cookie("user_id", user_id, httponly=True, secure=False, samesite="None")
+        
+        return response
 
 
 @auth_routes.route("/get-username", methods=["POST"])

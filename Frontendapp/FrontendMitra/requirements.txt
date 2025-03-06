@@ -1,6 +1,7 @@
 Flask 
 pymongo 
 flask-jwt-extended 
+pip-system-certs
 flask-socketio
 flask-mail
 python-dotenv
