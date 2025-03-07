@@ -12,9 +12,12 @@ import ResetPassword from "./pages/ResetPassword";
 import After_Login_Home from "./pages/After_Login_Home";
 import Profile from "./pages/Profile"
 import Test from "./pages/Test"
+<<<<<<< HEAD:frontend/src/App.jsx
 import ContactUs from "./pages/Contact_Us";
 import Plan from "./pages/Plan"
 
+=======
+>>>>>>> e2754c7ea8f0562b3d43631cb9d151edca2ff2c2:Frontendapp/FrontendMitra/frontend/src/App.jsx
 const App = () => {
   return (
     <>
@@ -31,7 +34,10 @@ const App = () => {
         <Route path="/reset_password/:token" element={<ResetPassword />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/test" element={<Test/>}/>
+<<<<<<< HEAD:frontend/src/App.jsx
         <Route path="/contact_us" element={<ContactUs />} />
+=======
+>>>>>>> e2754c7ea8f0562b3d43631cb9d151edca2ff2c2:Frontendapp/FrontendMitra/frontend/src/App.jsx
       </Routes>
       {/* <Footer /> */}
     </>
