@@ -255,12 +255,16 @@ def callback():
         print("User successfully added to the database.")
         # access_token = generate_token(email)
         access_token = generate_token(email)
+        print(f'Email: {email}')
+        print(f'full name: {full_name}')
+        print(f'First name: {first_name}')
         print(f"Generated Access Token: {access_token}")
-
-
-        response = make_response(redirect("http://localhost:3000/home"))  
-        response.set_cookie("access_token", access_token, httponly=True, secure=False, samesite="None")  
-
+        response = make_response(jsonify({"message": "Login successful" , "access_token" : access_token}))
+        print("Existing User")
+        response.set_cookie("access_token", access_token, httponly=False, secure=False, samesite="None")  
+        print("Cookies set")
+        response.headers["Location"] = f"http://localhost:3000/home/?access_token={access_token}"
+        response.status_code = 302 
         return response
     
     access_token = generate_token(email)

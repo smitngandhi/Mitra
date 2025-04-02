@@ -2,38 +2,198 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import heroImage from "../assets/image1.jpg";
 import { useNavigate } from "react-router-dom";
+import User from '../assets/User.png'
+import image1 from '../assets/image1.jpg'
+import bing from '../assets/bing.svg'
+import React, { useState } from 'react';
+import '../After_Login.css';
+import { useCookies } from "react-cookie";
+import { useEffect } from "react";
+
 
 const Home = () => {
+
+        const [cookies, setCookie] = useCookies(["access_token"]);
+
+        useEffect(() => {
+          const urlParams = new URLSearchParams(window.location.search);
+          const accessTokenFromURL = urlParams.get("access_token");
+
+          if (accessTokenFromURL && !cookies.access_token) {
+              console.log("Inside")
+              setCookie("access_token", accessTokenFromURL, {
+                  path: "/",
+                  maxAge : 3600
+              });
+
+              console.log("Access token stored in cookies!");
+
+              // Remove the access_token from the URL
+              const newURL = window.location.pathname;
+              window.history.replaceState({}, document.title, newURL);
+          }
+        }, [cookies.access_token, setCookie]);
+
+        // 6 Testimonials
+        const testimonialsData = [
+          {
+            text: "Mitra's self-assessment tools helped me recognize my anxiety triggers that I'd been overlooking for years. The personalized self-care plan was exactly what I needed to start making positive changes in my daily routine.",
+            name: "Keval Shah",
+            position: "A GATE Aspirant",
+            image: User
+          },
+          {
+            text: "As someone who struggled to understand my fluctuating moods, Mitra's chatbot became my daily companion. It helped me track patterns in my emotional states and suggested practical coping strategies that actually worked for me.",
+            name: "Jhil Bhavsar",
+            position: "Database Administrator",
+            image: User
+          },
+          {
+            text: "The mind state assessments in Mitra gave me insights about myself that years of journaling couldn't provide. I finally understand the connection between my sleep patterns and emotional wellbeing thanks to the detailed analysis.",
+            name: "Tisha Patel",
+            position: "Backend Developer",
+            image: User
+          },
+          {
+            text: "Mitra's self-care plans are realistic and adaptable to my busy schedule. What impressed me most was how the recommendations evolved as my mental state improved. It felt like having a personal wellness coach in my pocket.",
+            name: "Rudri Bhatt",
+            position: "Graduate Student",
+            image: User
+          },
+          {
+            text: "I was skeptical about chatbots, but Mitra's AI surprised me with its empathetic responses. During a particularly difficult week, the guided breathing exercises and mindfulness sessions recommended by Mitra made a tremendous difference.",
+            name: "Hemit Rana",
+            position: "Teaching Assistant",
+            image: User
+          },
+          {
+            text: "The best part about Mitra is how it connects the dots between different aspects of mental wellbeing. The app helped me understand how my diet and exercise habits were affecting my mood, and offered practical suggestions that fit my lifestyle.",
+            name: "Yashvi Thakkar",
+            position: "UX Designer",
+            image: User
+          }
+        ];
+      
+        // Track which set of 3 testimonials is visible (0 or 3)
+        const [testimonialIndex, setTestimonialIndex] = useState(0);
+      
+        const showNextTestimonials = () => {
+          // Move from 0 to 3, or from 3 back to 0
+          setTestimonialIndex((prev) => (prev + 3) % 6);
+        };
+      
+        const showPrevTestimonials = () => {
+          // Move from 0 to 3, or from 3 back to 0
+          setTestimonialIndex((prev) => (prev - 3 + 6) % 6);
+        };
+      
+        // Only show 3 testimonials based on the current index
+        const visibleTestimonials = testimonialsData.slice(testimonialIndex, testimonialIndex + 3);
+      
   const navigate = useNavigate();
   return (
-    <>
+    <div className="navbar-val">
     <Navbar/>
-    <div className="font-sans bg-white">
-      
-      {/* Hero Section */}
-      <section className="flex flex-col md:flex-row items-center justify-between p-5 md:p-8 h-screen">
-        <div className="md:w-1/2 space-y-3">
-          <h2 className="text-3xl md:text-4xl font-bold leading-tight">
-            Guiding You from Struggles to Strength, One Conversation at a Time
-          </h2>
-          <p className="text-gray-500">
-            Mitra: A Gentle Whisper in the Storm, A Light in Your Darkest Hour
-          </p>
-          <button 
+    <div className="app">
+      {/* Main Content */}
+      <main className="main-content">
+        {/* Hero Section */}
+        <div className="hero-section">
+          <div className="hero-text">
+            <h2>Guiding You from Struggles to Strength, One Conversation at a Time</h2>
+            <p>Mitra: A Gentle Whisper in the Storm, A Light in Your Darkest Hour</p>
+            <button 
           className="px-6 py-3 bg-indigo-600 text-white rounded-md transition-all duration-300
                     hover:bg-indigo-700 hover:shadow-md"
-          onClick={() => navigate("/register")}
-        >
-          Get Started
-        </button>
+          onClick={() => navigate("/chatbot")}
+        >Get Started</button>
+          </div>
+          <div className="hero-image">
+            <img
+              src= {image1}
+              alt="Therapy session illustration"
+            />
+          </div>
         </div>
-        <div className="md:w-1/2">
-          <img src={heroImage} alt="Hero" className="w-full h-auto object-cover" />
-        </div>
-      </section>
 
+
+        {/* Services Section */}
+        <div className="services-section" id="services">
+          <div className="services-header">
+            <h3>WHAT WE DO</h3>
+            <h2>We provide you a variety of services</h2>
+          </div>
+
+          <div className="services-cards">
+            <div className="service-card">
+              <div className="service-icon">
+                <img
+                  src={bing}
+                  alt="Mind icon"
+                />
+              </div>
+              <h3>Know Your MIND</h3>
+              <p>The 'Know Your Mind' test explores your psychological profile.</p>
+            </div>
+
+            <div className="service-card">
+              <div className="service-icon">
+                <img
+                  src={bing}
+                  alt="Self-care icon"
+                />
+              </div>
+              <h3>SELFCARE</h3>
+              <p>A structured self-care plan fosters balance through healthy habits, mindfulness, and growth.</p>
+            </div>
+
+            <div className="service-card">
+              <div className="service-icon">
+                <img
+                  src={bing}
+                  alt="Chat icon"
+                />
+              </div>
+              <h3>MINDchat</h3>
+              <p>MindChat: Your Intelligent Companion for Mental Well-being & Self-Care.</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Testimonials Section */}
+        <div className="testimonials-header">
+            <div className="title-group">
+                <h3>TESTIMONIALS</h3>
+                <h2>See What Our Customers Say About Us</h2>
+            </div>
+            <div className="testimonial-arrows">
+              <button onClick={showPrevTestimonials} className="arrow-btn">‹</button>
+              <button onClick={showNextTestimonials} className="arrow-btn">›</button>
+            </div>
+        </div>
+          
+        <div className="testimonials-container">
+          {visibleTestimonials.map((testimonial, index) => (
+          <div key={index} className="testimonial-card">
+            <p className="testimonial-text">"{testimonial.text}"</p>
+            <div className="testimonial-author">
+                <img
+                src={testimonial.image}
+                alt={testimonial.name}
+                className="author-image"
+                />
+              <div className="author-info">
+                  <h4>{testimonial.name}</h4>
+                  <p>{testimonial.position}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+        </div>
+
+      </main>
     </div>
-    </>
+    </div>
   );
 };
 

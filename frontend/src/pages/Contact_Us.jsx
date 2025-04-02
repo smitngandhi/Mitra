@@ -1,6 +1,6 @@
 import React from "react";
 import "../Contact_Us.css";
-
+import Navbar from "../components/Navbar"
 const teamMembers = [
   {
     name: "DHRUVIL JOSHI",
@@ -20,17 +20,14 @@ const teamMembers = [
     description: "With a keen eye for UI/UX, Prachi crafts seamless user experiences. Her contributions in chatbot fine-tuning and sentiment analysis ensure MITRA understands and connects with users effectively.",
     email: "prachidesai7708@gmail.com",
   },
-  {
-    name: "MANAN MODI",
-    role: "Commander",
-    description: "A decisive leader in frontend and cloud solutions, Manan ensures MITRA is accessible, responsive, and scalable. His ability to translate ideas into intuitive interfaces makes the project user-friendly.",
-    email: "manan.modi9618@gmail.com",
-  },
 ];
 
 const ContactUs = () => {
   return (
+    <div className="contact-navbar">
+      <Navbar/>
     <div className="contact-container">
+      
       <h1 className="contact-title">Meet Our Team</h1>
       <div className="team-flex">
         {teamMembers.map((member, index) => (
@@ -53,6 +50,7 @@ const ContactUs = () => {
           </div>
         ))}
       </div>
+    </div>
     </div>
   );
 };

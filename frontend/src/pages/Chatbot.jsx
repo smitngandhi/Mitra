@@ -1,12 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../Chatbot.css';
+import '../Profile.css';
+
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from "rehype-raw";
+
 import personheart from '../assets/personheart.svg'
 import person from '../assets/person.svg'
 import house from '../assets/house.svg'
 import freepeek from '../assets/freepeek.jpeg'
 import chat from '../assets/chat.svg'
 import arrow1 from '../assets/arrow1.svg'
+import test from "../assets/pencil-fill.svg"
+import question from "../assets/question-circle.svg"
 import { useCookies } from 'react-cookie';
+import { useNavigate } from 'react-router-dom';
 
 function HappinessMeter({ value, onChange }) {
   const radius = 80;      // Radius for the arc
@@ -60,7 +69,7 @@ function HappinessMeter({ value, onChange }) {
     const timer = setTimeout(() => setAnimateKnob(false), 1000);
     return () => clearTimeout(timer);
   }, [value]);
-
+ 
   return (
     <div className="happiness-meter-container">
       <svg
@@ -152,13 +161,15 @@ function Chatbot() {
 
   // Sidebar navigation items
   const navItems = [
-    { icon: chat, label: 'MINDchat', active: true },
-    { icon: person, label: 'Welfare Test', active: false },
-    { icon: personheart, label: 'Selfcare Plans', active: false },
-    { icon: person, label: 'Profile', active: false },
-    { icon: house, label: 'Home', active: false },
+    { icon: chat, label: 'MindChat', path: '/chatbot'},
+        { icon: test, label: 'Self Test ', path: '/test'},
+        { icon: personheart, label: 'SelfCare Plans', path: '/selfcare'},
+        { icon: question, label: 'FAQs', path: '/faqs'},
+        { icon: person, label: 'Profile', path: '/profile'},    
+        { icon: house, label: 'Home', path: '/home'},
   ];
 
+  
   // Chat state
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
@@ -191,54 +202,58 @@ function Chatbot() {
     console.log(accessToken);
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/v1/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message: message, 
-          access_token: accessToken, // Passing token as in your format
-        }),
-      });
-
-      const data = await response.json();
-      console.log(data);
-      
-      // Short delay to show typing animation
-      setTimeout(() => {
-        if (response.ok) {
-          setMessages((prev) => {
-            // Remove isNew flag from previous messages
-            const updatedPrev = prev.map(msg => ({...msg, isNew: false}));
-            return [...updatedPrev, { role: 'ai', text: data.reply, isNew: true }];
-          });
-
-          // Update Happiness Meter based on sentiment score
-          if (data.sentiment_score !== undefined) {
-            setHappiness(data.sentiment_score); // Assuming score is between 0 and 1
-          }
-        } else {
-          console.error("API Error:", data.msg || "No response from API.");
-          setMessages((prev) => {
-            const updatedPrev = prev.map(msg => ({...msg, isNew: false}));
-            return [...updatedPrev, { role: 'ai', text: 'Error communicating with AI.', isNew: true }];
-          });
-        }
-        setIsLoading(false);
-      }, 1000);
-      
-    } catch (error) {
-      console.error("Unexpected error:", error);
-      setTimeout(() => {
-        setMessages((prev) => {
-          const updatedPrev = prev.map(msg => ({...msg, isNew: false}));
-          return [...updatedPrev, { role: 'ai', text: 'Error connecting to the server.', isNew: true }];
+        const response = await fetch("http://127.0.0.1:5000/api/v1/api/chat", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                message: message,
+                access_token: accessToken, // Passing token as in your format
+            }),
         });
-        setIsLoading(false);
-      }, 1000);
+
+        const data = await response.json();
+        console.log(data);
+
+        // Short delay to show typing animation
+        setTimeout(() => {
+            if (response.ok) {
+                setMessages((prev) => {
+                    // Remove isNew flag from previous messages
+                    const updatedPrev = prev.map(msg => ({ ...msg, isNew: false }));
+                    return [...updatedPrev, {
+                        role: 'ai',
+                        text: <ReactMarkdown remarkPlugins={[remarkGfm]}>{data.reply}</ReactMarkdown>,
+                        isNew: true
+                    }];
+                });
+
+                // Update Happiness Meter based on sentiment score
+                if (data.sentiment_score !== undefined) {
+                    setHappiness(data.sentiment_score);
+                }
+            } else {
+                console.error("API Error:", data.msg || "No response from API.");
+                setMessages((prev) => {
+                    const updatedPrev = prev.map(msg => ({ ...msg, isNew: false }));
+                    return [...updatedPrev, { role: 'ai', text: 'Error communicating with AI.', isNew: true }];
+                });
+            }
+            setIsLoading(false);
+        }, 1000);
+
+    } catch (error) {
+        console.error("Unexpected error:", error);
+        setTimeout(() => {
+            setMessages((prev) => {
+                const updatedPrev = prev.map(msg => ({ ...msg, isNew: false }));
+                return [...updatedPrev, { role: 'ai', text: 'Error connecting to the server.', isNew: true }];
+            });
+            setIsLoading(false);
+        }, 1000);
     }
-  };
+};
 
   // Auto-scroll to bottom when messages update
   const messagesEndRef = useRef(null);
@@ -337,21 +352,25 @@ function Chatbot() {
   };
 
   const hasMessages = messages.length > 0;
-
+ 
+  const navigate = useNavigate();
+  
+        
+  
   return (
-    <div className="container">
+    <div className="app-container">
       {/* LEFT SIDEBAR */}
       <aside className="sidebar">
         <h2 className="Mitra">MITRA</h2>
         <nav>
           <ul>
             {navItems.map((item, idx) => (
-              <li key={idx} className={`nav-item ${item.active ? 'active' : ''}`}>
-                <img
-                  src={item.icon}
-                  alt={`${item.label} Logo`}
-                  className="menu-logo"
-                />
+              <li 
+                key={idx} 
+                className="nav-item" 
+                onClick={() => navigate(item.path)}
+              >
+                <img src={item.icon} alt={`${item.label} Logo`} className="menu-logo" />
                 {item.label}
               </li>
             ))}

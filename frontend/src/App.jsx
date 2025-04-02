@@ -13,6 +13,12 @@ import After_Login_Home from "./pages/After_Login_Home";
 import Profile from "./pages/Profile"
 import Test from "./pages/Test"
 import ContactUs from "./pages/Contact_Us";
+import Selfcare from "./pages/Selfcare";
+import Meditation from "./pages/Meditation";
+import Breathing from "./pages/Breathing";
+
+import Music_Generation from "./pages/Music_Generation";
+
 
 const App = () => {
   return (
@@ -30,6 +36,11 @@ const App = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="/test" element={<Test/>}/>
         <Route path="/contact_us" element={<ContactUs />} />
+        <Route path="/selfcare" element={<Selfcare />} />
+        <Route path="/meditation" element={<Meditation />} />
+        <Route path="/breathing" element={<Breathing/>}/>
+        <Route path="/music_generation" element={<Music_Generation/>}/>
+
       </Routes>
       {/* <Footer /> */}
     </>
